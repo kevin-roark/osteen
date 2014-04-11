@@ -58,6 +58,15 @@ body {
   z-index: 1;
 }
 
+.text-zone {
+  position: fixed;
+  left: 20px;
+  top: 30%;
+  letter-spacing: 2px;
+  font-size: 240px;
+  z-index: 10000;
+}
+
 .debug-timer {
   position: absolute;
   left: 30px;
