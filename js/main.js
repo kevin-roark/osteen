@@ -16,8 +16,9 @@ $(function() {
 
   //var audio = document.querySelector('#audio');
   //var $aud = $(audio);
-  
+
   var vids = [satan, depression, cena, wwe];
+  var $vids = [$satan, $depression, $cena, $wwe];
 
   var numMedia = vids.length; // number of things to load
   var mediasReady = 0;
@@ -30,6 +31,7 @@ $(function() {
   };
 
   var AUDIO_LENGTH = 100000;
+  var SCALE_TIME = 666;
 
   for (var i = 0; i < vids.length; i++)
     vids[i].addEventListener('canplaythrough', mediaReady);
@@ -45,7 +47,10 @@ $(function() {
 
     //audio.play();
 
+    startVids();
+
     setTimeout(hideFooter, 1000);
+    setTimeout(startScaling, SCALE_TIME);
 
     soundControl();
 
@@ -109,6 +114,30 @@ $(function() {
     setTimeout(function() {
       el.remove();
     }, kt.randInt(6666, 2666));
+  }
+
+  function startVids() {
+    for(var i = 0; i < vids.length; i++) {
+      vids[i].play();
+      vids[i].loop = true;
+    }
+  }
+
+  function startScaling() {
+    function scale() {
+      var $v = kt.choice($vids);
+      var s = Math.round(Math.random() * 1) + 1;
+      kt.scale($v, s);
+      $v.css('z-index', '1000');
+
+      setTimeout(function() {
+        kt.scale($v, 1);
+        $v.css('z-index', '1');
+        scale();
+      }, kt.randInt(300, 50));
+    }
+
+    scale();
   }
 
 });

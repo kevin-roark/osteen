@@ -18,6 +18,22 @@ Kutility.prototype.choice = function(arr) {
 }
 
 /**
+ * return shuffled version of an array.
+ *
+ * adapted from css tricks
+ *
+ * @api public
+ */
+Kutility.prototype.shuffle = function(arr) {
+  var newArray = new Array(arr.length);
+  for (var i = 0; i < arr.length; i++)
+    newArray[i] = arr[i];
+
+  newArray.sort(function() { return 0.5 - Math.random() });
+  return newArray;
+}
+
+/**
  * returns a random color as an 'rgb(x, y, z)' string
  *
  * @api public
