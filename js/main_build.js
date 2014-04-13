@@ -474,17 +474,17 @@ $(function() {
 
   var wordset = [
     "THE ENEMY ALWAYS FIGHTS US THE HARDEST WHEN WE ARE CLOSE TO OUR VICTORY",
-    "WHEN I WAS IN AFRICA A SAFARI GUY TOLD HOW WHEN A GAZELLE IS PREGANT A LION STALKS AND KILLS IT AND IT'S CHILD",
-    "CLOSE TO THE PROMOT<br>ION",
+    "WHEN I WAS IN AFRICA A SAFARI GUIDE TOLD US WHEN A GAZELLE IS PREGANT A LION STALKS AND KILLS IT AND IT'S CHILD",
+    "CLOSE TO THE PROMOT-<br>ION",
     "REACH A NEW LEVEL IN YOUR DESTINY",
     "YOU'RE ABOUT TO GIVE BIRTH",
-    "THE OPPOSITE OF PLAY ISN'T WORK ITS DEPRESS<br>ION",
+    "THE OPPOSITE OF PLAY ISN'T WORK ITS DEPRESS-<br>ION",
     "THAT'S WHAT THIS ONE LADY DID",
     "WHAT'S HE SAYING",
     "MEDICAL SCIENCE TELLS US THAT PEOPLE THAT LAUGH IT BOOSTS THEIR IMMUNE SYSTEM",
     "IT'S HEALTHY TO HAVE FUN",
     "SHE CAN SLEEP LIKE A BABY",
-    "LAUGHTER ACTIVATES THE BODY'S NATURAL TRANQUIL<br>IZERS THAT GOD PUT ON THE INSIDE",
+    "LAUGHTER ACTIVATES THE BODY'S NATURAL TRANQUIL-<br>IZERS THAT GOD PUT ON THE INSIDE",
     "INSOMNIA",
     "SOMETHING FUNNY TO WATCH",
     "IT'S JUST FROM TENSION",
@@ -501,10 +501,15 @@ $(function() {
     wwe: true
   };
 
+  var names = ['cena', 'wwe', 'satan', 'depression'];
+  var nameMap = {cena: cena, wwe: wwe, satan: satan, depression: depression};
+  var $nameMap = {cena: $cena, wwe: $wwe, satan: $satan, depression: $depression};
+
   var AUDIO_LENGTH = 100000;
   var SCALE_TIME = 13666;
   var WORD_TIME = 18666;
   var FLICKER_TIME = 30000;
+  var COLOR_TIME = 52000;
 
   for (var i = 0; i < vids.length; i++)
     vids[i].addEventListener('canplaythrough', mediaReady);
@@ -526,6 +531,7 @@ $(function() {
     setTimeout(startScaling, SCALE_TIME);
     setTimeout(wordFlashing, WORD_TIME);
     setTimeout(blackFlicker, FLICKER_TIME);
+    setTimeout(colorMorph, COLOR_TIME);
 
     soundControl();
 
@@ -623,7 +629,7 @@ $(function() {
     function flash() {
       tz.html(words[i]);
       if (++i < words.length)
-        setTimeout(flash, kt.randInt(400, 150));
+        setTimeout(flash, kt.randInt(450, 180));
       else
         callback();
     }
@@ -663,11 +669,61 @@ $(function() {
       flashText(words, color, function() {
         // done flashing
         if (++idx < wordset.length)
-          setTimeout(showSentence, kt.randInt(12000, 5000));
+          setTimeout(showSentence, kt.randInt(15000, 6000));
       });
     }
 
     showSentence();
+  }
+
+  function colorMorph() {
+
+    function saturStyle(callback) {
+      var bloated = {};
+      var bloatCount = 0;
+      sat();
+
+      function sat() {
+        var n = kt.choice(names);
+        if (!bloated[n]) {
+          var $v = $nameMap[n];
+          var con = 100;
+          bloat();
+
+          function bloat() {
+            kt.saturate($v, con++);
+            kt.contrast($v, con);
+            if (con < 200)
+              setTimeout(bloat, kt.randInt(80));
+            else
+              doneBloat();
+          }
+
+          function doneBloat() {
+            bloated[n] = true;
+            bloatCount++;
+            if (bloatCount == vids.length) {
+              callback();
+            } else {
+              sat();
+            }
+          }
+
+        } else {
+          sat();
+        }
+      }
+    }
+
+    function morphStyle() {
+      var $v = kt.choice($vids);
+      kt.hutate($v, kt.randInt(360));
+      setTimeout(morphStyle, kt.randInt(1000, 200));
+    }
+
+    saturStyle(function() { // pump contrast for them one at a time
+      setTimeout(morphStyle, 5000); // then start morphing in a bit
+    });
   }
 
 });
