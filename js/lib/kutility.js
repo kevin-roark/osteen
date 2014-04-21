@@ -107,9 +107,29 @@ Kutility.prototype.contrasters = function() {
  *
  * @api public
  */
-Kutility.prototype.addShadow = function(el, size) {
+Kutility.prototype.randomShadow = function(el, size) {
   var s = size + 'px';
   var shadow = '0px 0px ' + s + ' ' + s + ' ' + this.randColor();
+  addShadow(el, shadow);
+}
+
+/**
+ * Add shadow with offset x and y pixels, z pixels of blur radius,
+ * w pizels of spread radius, and cool color
+ *
+ * @api public
+ */
+Kutility.prototype.shadow = function(el, x, y, z, w, color) {
+  var xp = x + "px";
+  var yp = y + "px";
+  var zp = z + "px";
+  var wp = w + "px";
+
+  var shadow = xp + " " + yp + " " + zp + " " + wp + " " + color;
+  addShadow(el, shadow);
+}
+
+function addShadow(el, shadow) {
   el.css('-webkit-box-shadow', shadow);
   el.css('-moz-box-shadow', shadow);
   el.css('box-shadow', shadow);
@@ -270,6 +290,100 @@ Kutility.prototype.straw = function(el, w, x) {
   var s = ' scale(' + w + ',' + w + ')';
   var r = ' rotate(' + x + 'deg)';
   this.setTransform(el, ct + s + r);
+}
+
+/**
+ * Set perspective to x pixels
+ *
+ * @api public
+ */
+Kutility.prototype.perp = function(el, x) {
+  var p = x + 'px';
+  el.css('-webkit-perspective', p);
+  el.css('-moz-perspective', p);
+  el.css('-ms-perspective', p);
+  el.css('-o-perspective', p);
+  el.css('perspective', p);
+}
+
+/**
+ * Set perspective-origin to x and y percents.
+ *
+ * @api public
+ */
+Kutility.prototype.perpo = function(el, x, y) {
+  var p = x + "% " + y + "%";
+  el.css('-webkit-perspective-origin', p);
+  el.css('-moz-perspective-origin', p);
+  el.css('-ms-perspective-origin', p);
+  el.css('-o-perspective-origin', p);
+  el.css('perspective-origin', p);
+}
+
+/**
+ * Translate an element by x, y, z pixels
+ *
+ * @api public
+ */
+Kutility.prototype.trans3d = function(el, x, y, z) {
+  var ct = this.getTransform(el);
+  ct = ct.replace(/matrix3d\(.*?\)/, '').replace('none', '');
+
+  var t = ' translate3d(' + x + 'px, ' + y + 'px, ' + z + 'px)';
+  this.setTransform(el, ct + t);
+}
+
+/**
+ * Scale an element by x (no units)
+ *
+ * @api public
+ */
+Kutility.prototype.scale3d = function(el, x) {
+  var ct = this.getTransform(el);
+  ct = ct.replace(/matrix3d\(.*?\)/, '').replace('none', '');
+
+  var t = ' scale3d(' + x + ', ' + x + ', ' + z + ')';
+  this.setTransform(el, ct + t);
+}
+
+/**
+ * Rotate an element about <x, y, z> by d degrees
+ *
+ * @api public
+ */
+Kutility.prototype.rotate3d = function(el, x, y, z, d) {
+  var ct = this.getTransform(el);
+  ct = ct.replace(/matrix3d\(.*?\)/, '').replace('none', '');
+
+  var t = ' rotate3d(' + x + ', ' + y + ', ' + z + ', ' + d + 'deg)';
+  this.setTransform(el, ct + t);
+}
+
+/**
+ * Rotate an element about x axis by d degrees
+ *
+ * @api public
+ */
+Kutility.prototype.rotate3dx = function(el, d) {
+  this.rotate3d(el, 1, 0, 0, d);
+}
+
+/**
+ * Rotate an element about y axis by d degrees
+ *
+ * @api public
+ */
+Kutility.prototype.rotate3dy = function(el, d) {
+  this.rotate3d(el, 0, 1, 0, d);
+}
+
+/**
+ * Rotate an element about z axis by d degrees
+ *
+ * @api public
+ */
+Kutility.prototype.rotate3dz = function(el, d) {
+  this.rotate3d(el, 0, 0, 1, d);
 }
 
 /**

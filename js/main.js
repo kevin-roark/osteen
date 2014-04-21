@@ -22,17 +22,17 @@ $(function() {
 
   var wordset = [
     "THE ENEMY ALWAYS FIGHTS US THE HARDEST WHEN WE ARE CLOSE TO OUR VICTORY",
-    "WHEN I WAS IN AFRICA A SAFARI GUIDE TOLD US WHEN A GAZELLE IS PREGANT A LION STALKS AND KILLS IT AND IT'S CHILD",
-    "CLOSE TO THE PROMOT-<br>ION",
+    "WHEN A GAZELLE IS PREGANT A LION STALKS AND KILLS IT AND IT'S CHILD",
+    "CLOSE TO THE PROMOTION",
     "REACH A NEW LEVEL IN YOUR DESTINY",
     "YOU'RE ABOUT TO GIVE BIRTH",
-    "THE OPPOSITE OF PLAY ISN'T WORK ITS DEPRESS-<br>ION",
+    "THE OPPOSITE OF PLAY ISN'T WORK ITS DEPRESSION",
     "THAT'S WHAT THIS ONE LADY DID",
     "WHAT'S HE SAYING",
     "MEDICAL SCIENCE TELLS US THAT PEOPLE THAT LAUGH IT BOOSTS THEIR IMMUNE SYSTEM",
     "IT'S HEALTHY TO HAVE FUN",
     "SHE CAN SLEEP LIKE A BABY",
-    "LAUGHTER ACTIVATES THE BODY'S NATURAL TRANQUIL-<br>IZERS THAT GOD PUT ON THE INSIDE",
+    "LAUGHTER ACTIVATES THE BODY'S NATURAL TRANQUILIZERS THAT GOD PUT ON THE INSIDE",
     "INSOMNIA",
     "SOMETHING FUNNY TO WATCH",
     "IT'S JUST FROM TENSION",
@@ -58,6 +58,7 @@ $(function() {
   var WORD_TIME = 18666;
   var FLICKER_TIME = 30000;
   var COLOR_TIME = 52000;
+  var SHAKE_TIME = 70000;
 
   for (var i = 0; i < vids.length; i++)
     vids[i].addEventListener('canplaythrough', mediaReady);
@@ -80,6 +81,7 @@ $(function() {
     setTimeout(wordFlashing, WORD_TIME);
     setTimeout(blackFlicker, FLICKER_TIME);
     setTimeout(colorMorph, COLOR_TIME);
+    setTimeout(shakeText, SHAKE_TIME);
 
     soundControl();
 
@@ -235,16 +237,12 @@ $(function() {
         var n = kt.choice(names);
         if (!bloated[n]) {
           var $v = $nameMap[n];
-          var con = 100;
           bloat();
+          doneBloat();
 
           function bloat() {
-            kt.saturate($v, con++);
-            kt.contrast($v, con);
-            if (con < 200)
-              setTimeout(bloat, kt.randInt(80));
-            else
-              doneBloat();
+            kt.saturate($v, 200);
+            kt.contrast($v, 200);
           }
 
           function doneBloat() {
@@ -253,12 +251,12 @@ $(function() {
             if (bloatCount == vids.length) {
               callback();
             } else {
-              sat();
+              setTimeout(sat, 2500);
             }
           }
 
         } else {
-          sat();
+          sat(); // pick another
         }
       }
     }
@@ -272,6 +270,43 @@ $(function() {
     saturStyle(function() { // pump contrast for them one at a time
       setTimeout(morphStyle, 5000); // then start morphing in a bit
     });
+
+  }
+
+  function shakeText() {
+    var text = $('.text-zone');
+    rset();
+    shake();
+
+    function shake() {
+      var ld = Math.floor(Math.random() * 10);
+      if (Math.random() < 0.5)
+        ld = - ld;
+
+      var td = Math.floor(Math.random() * 10);
+      if (Math.random() < 0.5)
+        td = -td;
+
+      console.log(ld);
+
+      var left = parseInt(text.css('left'));
+      var top = parseInt(text.css('top'));
+
+      var nl = (left + ld)  + 'px';
+      var nt = (top + td) + 'px';
+
+      text.css('left', nl);
+      text.css('top', nt);
+
+      setTimeout(shake, kt.randInt(50, 20));
+    }
+
+    function rset() {
+      text.css('left', '20px');
+      text.css('top', '30%');
+      setTimeout(rset, 12000);
+    }
+
   }
 
 });
