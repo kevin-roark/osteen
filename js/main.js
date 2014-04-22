@@ -59,6 +59,7 @@ $(function() {
   var FLICKER_TIME = 30000;
   var COLOR_TIME = 52000;
   var SHAKE_TIME = 70000;
+  var FONT_TIME = 70500;
 
   for (var i = 0; i < vids.length; i++)
     vids[i].addEventListener('canplaythrough', mediaReady);
@@ -82,6 +83,7 @@ $(function() {
     setTimeout(blackFlicker, FLICKER_TIME);
     setTimeout(colorMorph, COLOR_TIME);
     setTimeout(shakeText, SHAKE_TIME);
+    setTimeout(fontMorph, FONT_TIME);
 
     soundControl();
 
@@ -305,6 +307,32 @@ $(function() {
       text.css('left', '20px');
       text.css('top', '30%');
       setTimeout(rset, 12000);
+    }
+  }
+
+  function fontMorph() {
+    var text = $('.text-zone');
+    var fonts = [
+        'serif'
+      , 'sans-serif'
+      , 'Helvetica, Arial, sans-serif'
+      , 'Impact, Charcoal, sans-serif'
+      , '"Lucida Sans Unicode", "Lucida Grande", sans-serif'
+      , '"Palatino Linotype", "Book Antiqua", Palatino, serif'
+      , 'Georgia, serif'
+      , '"Lucida Console", Monaco, monospace'
+      , '"Courier New", Courier, monospace'
+      , 'monospace'
+      , 'cursive'
+      , '"Comic Sans MS", "Comic Sans", fantasy'
+    ];
+    font();
+
+    function font() {
+      var f = kt.choice(fonts);
+      text.css('font-family', f);
+
+      setTimeout(font, kt.randInt(200, 50));
     }
 
   }
