@@ -343,7 +343,7 @@ Kutility.prototype.scale3d = function(el, x) {
   var ct = this.getTransform(el);
   ct = ct.replace(/matrix3d\(.*?\)/, '').replace('none', '');
 
-  var t = ' scale3d(' + x + ', ' + x + ', ' + z + ')';
+  var t = ' scale3d(' + x + ', ' + x + ', ' + x + ')';
   this.setTransform(el, ct + t);
 }
 
@@ -385,6 +385,16 @@ Kutility.prototype.rotate3dy = function(el, d) {
  */
 Kutility.prototype.rotate3dz = function(el, d) {
   this.rotate3d(el, 0, 0, 1, d);
+}
+
+/** rotate and scale in 3d */
+Kutility.prototype.straw3d = function(el, x, y, z, d, s) {
+  var ct = this.getTransform(el);
+  ct = ct.replace(/matrix3d\(.*?\)/, '').replace('none', '');
+
+  var t = ' scale3d(' + s + ', ' + s + ', ' + s + ')';
+  t += ' rotate3d(' + x + ', ' + y + ', ' + z + ', ' + d + 'deg)';
+  this.setTransform(el, ct + t);
 }
 
 /**
@@ -626,6 +636,7 @@ $(function() {
   var COLOR_TIME = 52000;
   var SHAKE_TIME = 70000;
   var FONT_TIME = 70500;
+  var MELT_TIME = 90000;
 
   for (var i = 0; i < vids.length; i++)
     vids[i].addEventListener('canplaythrough', mediaReady);
@@ -650,6 +661,7 @@ $(function() {
     setTimeout(colorMorph, COLOR_TIME);
     setTimeout(shakeText, SHAKE_TIME);
     setTimeout(fontMorph, FONT_TIME);
+    setTimeout(vidMelt, MELT_TIME);
 
     soundControl();
 
@@ -732,11 +744,13 @@ $(function() {
       setTimeout(function() {
         kt.scale($v, 1);
         $v.css('z-index', '1');
-        scale();
+        if (active.scale)
+          scale();
       }, kt.randInt(300, 50));
     }
 
     scale();
+    active.scale = true;
   }
 
   function flashText(words, color, callback) {
@@ -855,8 +869,6 @@ $(function() {
       if (Math.random() < 0.5)
         td = -td;
 
-      console.log(ld);
-
       var left = parseInt(text.css('left'));
       var top = parseInt(text.css('top'));
 
@@ -899,6 +911,46 @@ $(function() {
       text.css('font-family', f);
 
       setTimeout(font, kt.randInt(200, 50));
+    }
+  }
+
+  function vidMelt() {
+    var degs = [];
+    active.scale = false;
+    active.melt = true;
+
+    function melt(i) {
+      var vid = $vids[i];
+      var deg = degs[i];
+
+      deg += kt.randInt(7) - 2;
+
+      var y = Math.random() * 0.7 + 0.3;
+      var z = Math.sqrt(1 - y * y);
+      var s = Math.random() * 0.6 + 1;
+
+      kt.straw3d(vid, 0, y, z, deg, s);
+      kt.randomShadow(vid, kt.randInt(20, 5));
+
+      degs[i] = deg;
+
+      if (active.melt) {
+        setTimeout(function() {
+          melt(i);
+        }, kt.randInt(50, 20));
+      }
+
+    }
+
+    function startMelt(i) {
+      setTimeout(function() {
+        melt(i);
+      }, kt.randInt(10000, 2000));
+    }
+
+    for (var i = 0; i < $vids.length; i++) {
+      degs.push(0);
+      startMelt(i);
     }
 
   }

@@ -342,7 +342,7 @@ Kutility.prototype.scale3d = function(el, x) {
   var ct = this.getTransform(el);
   ct = ct.replace(/matrix3d\(.*?\)/, '').replace('none', '');
 
-  var t = ' scale3d(' + x + ', ' + x + ', ' + z + ')';
+  var t = ' scale3d(' + x + ', ' + x + ', ' + x + ')';
   this.setTransform(el, ct + t);
 }
 
@@ -384,6 +384,16 @@ Kutility.prototype.rotate3dy = function(el, d) {
  */
 Kutility.prototype.rotate3dz = function(el, d) {
   this.rotate3d(el, 0, 0, 1, d);
+}
+
+/** rotate and scale in 3d */
+Kutility.prototype.straw3d = function(el, x, y, z, d, s) {
+  var ct = this.getTransform(el);
+  ct = ct.replace(/matrix3d\(.*?\)/, '').replace('none', '');
+
+  var t = ' scale3d(' + s + ', ' + s + ', ' + s + ')';
+  t += ' rotate3d(' + x + ', ' + y + ', ' + z + ', ' + d + 'deg)';
+  this.setTransform(el, ct + t);
 }
 
 /**
