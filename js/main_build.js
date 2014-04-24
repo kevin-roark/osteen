@@ -615,6 +615,8 @@ $(function() {
     "MY MOTHER WAS DIAGNOSED WITH TERMINAL CANCER IN 1981"
   ];
 
+  wordset = kt.shuffle(wordset); // random ordering of phrases
+
   var numMedia = vids.length; // number of things to load
   var mediasReady = 0;
 
@@ -622,21 +624,28 @@ $(function() {
     satan: true,
     depression: true,
     cena: true,
-    wwe: true
+    wwe: true,
+    melt: false,
+    font: false,
+    shake: false,
+    color: false,
+    flicker: false,
+    scale: false,
+    words: false
   };
 
   var names = ['cena', 'wwe', 'satan', 'depression'];
   var nameMap = {cena: cena, wwe: wwe, satan: satan, depression: depression};
   var $nameMap = {cena: $cena, wwe: $wwe, satan: $satan, depression: $depression};
 
-  var AUDIO_LENGTH = 100000;
-  var SCALE_TIME = 13666;
-  var WORD_TIME = 18666;
-  var FLICKER_TIME = 30000;
-  var COLOR_TIME = 52000;
-  var SHAKE_TIME = 70000;
-  var FONT_TIME = 70500;
-  var MELT_TIME = 90000;
+  var AUDIO_LENGTH = 158000;
+  var SCALE_TIME = 6666;
+  var WORD_TIME = 10666;
+  var FLICKER_TIME = 15000;
+  var COLOR_TIME = 22000;
+  var SHAKE_TIME = 26000;
+  var FONT_TIME = 38000;
+  var MELT_TIME = 49000;
 
   for (var i = 0; i < vids.length; i++)
     vids[i].addEventListener('canplaythrough', mediaReady);
@@ -662,6 +671,7 @@ $(function() {
     setTimeout(shakeText, SHAKE_TIME);
     setTimeout(fontMorph, FONT_TIME);
     setTimeout(vidMelt, MELT_TIME);
+    setTimeout(endgame, AUDIO_LENGTH);
 
     soundControl();
 
@@ -678,6 +688,11 @@ $(function() {
       for (var i = 0; i < vids.length; i++)
         vids[i].currentTime = 0;
 
+      for (var key in active)
+        active[key] = false;
+
+      wordset = kt.shuffle(wordset); // random ordering of phrases
+
       start();
     }
 
@@ -688,6 +703,11 @@ $(function() {
 
       $('.footer').unbind('mouseenter');
       $('.footer').unbind('mouseleave');
+    }
+
+    for (var i = 0; i < vids.length; i++) {
+      $vids[i].animate({opacity: 0.2});
+      vids[i].pause();
     }
 
     showFooter();
@@ -728,9 +748,23 @@ $(function() {
   }
 
   function startVids() {
-    for(var i = 0; i < vids.length; i++) {
-      vids[i].play();
-      vids[i].loop = true;
+    var i = 0;
+    start();
+
+    function turnOn(i) {
+      $vids[i].animate({opacity: 1.0}, function() {
+        vids[i].play();
+        vids[i].loop = true;
+      });
+    }
+
+    function start() {
+      turnOn(i);
+      setTimeout(function() {
+        if (++i < vids.length) {
+          start();
+        }
+      }, kt.randInt(5000, 2000));
     }
   }
 
@@ -785,11 +819,13 @@ $(function() {
       hide();
       setTimeout(function() {
         reveal();
-        setTimeout(flicker, kt.randInt(400, 100));
+        if (active.flicker)
+          setTimeout(flicker, kt.randInt(400, 100));
       }, kt.randInt(200, 50));
     }
 
     flicker();
+    active.flicker = true;
   }
 
   function wordFlashing() {
@@ -799,12 +835,15 @@ $(function() {
       var words = wordset[idx].split(" ");
       var color = kt.colorWheel(kt.randInt(1536));
       flashText(words, color, function() {
+        if (++idx >= wordset.length)
+          idx = 0;
         // done flashing
-        if (++idx < wordset.length)
+        if (active.words)
           setTimeout(showSentence, kt.randInt(15000, 6000));
       });
     }
 
+    active.words = true;
     showSentence();
   }
 
@@ -846,17 +885,19 @@ $(function() {
     function morphStyle() {
       var $v = kt.choice($vids);
       kt.hutate($v, kt.randInt(360));
-      setTimeout(morphStyle, kt.randInt(1000, 200));
+      if (active.color)
+        setTimeout(morphStyle, kt.randInt(1000, 200));
     }
 
     saturStyle(function() { // pump contrast for them one at a time
       setTimeout(morphStyle, 5000); // then start morphing in a bit
     });
-
+    active.color = true;
   }
 
   function shakeText() {
     var text = $('.text-zone');
+    active.shake = true;
     rset();
     shake();
 
@@ -878,7 +919,8 @@ $(function() {
       text.css('left', nl);
       text.css('top', nt);
 
-      setTimeout(shake, kt.randInt(50, 20));
+      if (active.shake)
+        setTimeout(shake, kt.randInt(50, 20));
     }
 
     function rset() {
@@ -904,13 +946,17 @@ $(function() {
       , 'cursive'
       , '"Comic Sans MS", "Comic Sans", fantasy'
     ];
+    active.font = true;
     font();
 
     function font() {
       var f = kt.choice(fonts);
+      var s = kt.randInt(280, 24);
       text.css('font-family', f);
+      text.css('font-size', s + 'px');
 
-      setTimeout(font, kt.randInt(200, 50));
+      if (active.font)
+        setTimeout(font, kt.randInt(200, 50));
     }
   }
 
@@ -919,15 +965,18 @@ $(function() {
     active.scale = false;
     active.melt = true;
 
+    var counts = [];
+
     function melt(i) {
       var vid = $vids[i];
       var deg = degs[i];
+      counts[i] = counts[i] + 1;
 
       deg += kt.randInt(7) - 2;
 
       var y = Math.random() * 0.7 + 0.3;
       var z = Math.sqrt(1 - y * y);
-      var s = Math.random() * 0.6 + 1;
+      var s = Math.random() * 0.9 + 1;
 
       kt.straw3d(vid, 0, y, z, deg, s);
       kt.randomShadow(vid, kt.randInt(20, 5));
@@ -935,9 +984,15 @@ $(function() {
       degs[i] = deg;
 
       if (active.melt) {
-        setTimeout(function() {
-          melt(i);
-        }, kt.randInt(50, 20));
+        if (counts[i] % 100 != 0) {
+          setTimeout(function() {
+            melt(i);
+          }, kt.randInt(50, 20));
+        } else {
+          setTimeout(function() {
+            melt(i);
+          }, kt.randInt(5000, 2000));
+        }
       }
 
     }
@@ -950,6 +1005,7 @@ $(function() {
 
     for (var i = 0; i < $vids.length; i++) {
       degs.push(0);
+      counts.push(0);
       startMelt(i);
     }
 
