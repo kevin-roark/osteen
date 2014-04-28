@@ -69,7 +69,7 @@ $(function() {
   var COLOR_TIME = 22000;
   var SHAKE_TIME = 26000;
   var FONT_TIME = 38000;
-  var MELT_TIME = 49000;
+  var MELT_TIME = 75000;
 
   for (var i = 0; i < vids.length; i++)
     vids[i].addEventListener('canplaythrough', mediaReady);
@@ -188,7 +188,7 @@ $(function() {
         if (++i < vids.length) {
           start();
         }
-      }, kt.randInt(5000, 2000));
+      }, kt.randInt(1000, 200));
     }
   }
 
