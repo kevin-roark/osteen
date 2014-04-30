@@ -108,8 +108,7 @@ $(function() {
   function endgame() {
 
     function restart() {
-
-      //audio.currentTime = 0;
+      audio.currentTime = 0;
       for (var i = 0; i < vids.length; i++)
         vids[i].currentTime = 0;
 
