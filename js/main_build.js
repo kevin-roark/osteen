@@ -617,7 +617,7 @@ $(function() {
 
   wordset = kt.shuffle(wordset); // random ordering of phrases
 
-  var numMedia = vids.length + 1; // number of things to load
+  var numMedia = vids.length + 1 + 1; // vids + audio + keypress
   var mediasReady = 0;
 
   var active = {
@@ -651,6 +651,11 @@ $(function() {
     vids[i].addEventListener('canplaythrough', mediaReady);
   audio.addEventListener('canplaythrough', mediaReady);
 
+  $(document).keypress(function(ev) {
+    if (ev.keyCode == 115) // the 's' key
+      mediaReady();
+  });
+
   function mediaReady() {
     mediasReady++;
     if (mediasReady == numMedia) {
@@ -664,7 +669,7 @@ $(function() {
 
     startVids();
 
-    setTimeout(hideFooter, 1000);
+    setTimeout(hideFooter, 100);
     setTimeout(startScaling, SCALE_TIME);
     setTimeout(wordFlashing, WORD_TIME);
     setTimeout(blackFlicker, FLICKER_TIME);
@@ -675,17 +680,12 @@ $(function() {
     setTimeout(endgame, AUDIO_LENGTH);
 
     soundControl();
-
-    setInterval(function() {
-      //$('.debug-timer').html(depression.currentTime);
-    }, 200);
   }
 
   function endgame() {
 
     function restart() {
-
-      //audio.currentTime = 0;
+      audio.currentTime = 0;
       for (var i = 0; i < vids.length; i++)
         vids[i].currentTime = 0;
 
@@ -710,9 +710,6 @@ $(function() {
       $vids[i].animate({opacity: 0.2});
       vids[i].pause();
     }
-
-    showFooter();
-    setTimeout(restart, 5000);
   }
 
   function hideFooter() {
