@@ -590,8 +590,8 @@ $(function() {
   var wwe = document.querySelector('#wwe');
   var $wwe = $(wwe);
 
-  //var audio = document.querySelector('#audio');
-  //var $aud = $(audio);
+  var audio = document.querySelector('#audio');
+  var $aud = $(audio);
 
   var vids = [satan, depression, cena, wwe];
   var $vids = [$satan, $depression, $cena, $wwe];
@@ -617,7 +617,7 @@ $(function() {
 
   wordset = kt.shuffle(wordset); // random ordering of phrases
 
-  var numMedia = vids.length; // number of things to load
+  var numMedia = vids.length + 1; // number of things to load
   var mediasReady = 0;
 
   var active = {
@@ -649,6 +649,7 @@ $(function() {
 
   for (var i = 0; i < vids.length; i++)
     vids[i].addEventListener('canplaythrough', mediaReady);
+  audio.addEventListener('canplaythrough', mediaReady);
 
   function mediaReady() {
     mediasReady++;
@@ -659,7 +660,7 @@ $(function() {
 
   function start() {
 
-    //audio.play();
+    audio.play();
 
     startVids();
 
@@ -676,7 +677,7 @@ $(function() {
     soundControl();
 
     setInterval(function() {
-      $('.debug-timer').html(depression.currentTime);
+      //$('.debug-timer').html(depression.currentTime);
     }, 200);
   }
 
